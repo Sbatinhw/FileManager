@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace FileManager
 {
+    /// <summary>
+    /// Вывод информации на консоль
+    /// </summary>
     class PrintLine
     {
 

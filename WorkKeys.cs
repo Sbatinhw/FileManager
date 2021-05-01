@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace FileManager
 {
+    /// <summary>
+    /// Класс для взаимодействия клавишами клавиатуры с приложением
+    /// </summary>
     class WorkKeys
     {
-
+        
         public enum Doing
         {
             doit,
@@ -18,7 +21,7 @@ namespace FileManager
         }
 
         /// <summary>
-        /// обработка действий клавиш
+        /// Обработка действий клавиш
         /// </summary>
         /// <param name="select_position">текущая позиция в меню</param>
         /// <param name="menu_len">длина отображаемого списка</param>

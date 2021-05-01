@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
+/// <summary>
+/// Главное окно файлового менеджера
+/// </summary>
 namespace FileManager
 {
     class MainMenu
@@ -22,7 +24,7 @@ namespace FileManager
 
 
         /// <summary>
-        /// главный метод проекта, из него запускается приложение
+        /// Главный метод проекта, из него запускается приложение
         /// </summary>
         public void Menu()
         {
@@ -40,7 +42,7 @@ namespace FileManager
         }
 
         /// <summary>
-        /// вызов управления кнопками
+        /// Вызов управления кнопками
         /// </summary>
         public void Operation()
         {
@@ -78,7 +80,7 @@ namespace FileManager
 
         
         /// <summary>
-        /// действия с копированными элементами
+        /// Действия с копированными элементами
         /// </summary>
         public void DoCopy()
         {
@@ -107,13 +109,18 @@ namespace FileManager
             }
         }
 
-
+        /// <summary>
+        /// Полная очистка массива с копированными элементами
+        /// </summary>
         public void ClearCopyList()
         {
             copylist = new FileElement[1];
             havecopy = false;
         }
 
+        /// <summary>
+        /// Отобразить список копированных элементов
+        /// </summary>
         public void SelectCopyList()
         {
             int z = 0;
@@ -131,6 +138,9 @@ namespace FileManager
             Console.ReadLine();
         }
 
+        /// <summary>
+        /// Вставить копированные элементы в текущую директорию
+        /// </summary>
         public void PasteCopyList()
         {
             for (int i = 0; i < copylist.Length; i++)
@@ -143,7 +153,7 @@ namespace FileManager
         }
 
         /// <summary>
-        /// вызов дополнительных функций файла\папки
+        /// Вызов дополнительных функций файла\папки
         /// </summary>
         /// <param name="todo">определяет что нужно сделать</param>
         /// <param name="position">номер элемента</param>
@@ -158,6 +168,10 @@ namespace FileManager
             }
         }
 
+        /// <summary>
+        /// Добавить элемент в массив для копирования
+        /// </summary>
+        /// <param name="file_to_copy"></param>
         public void AddToCopyList(FileElement file_to_copy)
         {
             havecopy = true;
@@ -166,7 +180,7 @@ namespace FileManager
         }
 
         /// <summary>
-        /// список возможных действий с элементом
+        /// Список возможных действий с элементом
         /// </summary>
         /// <param name="position">номер элемента</param>
         /// <returns></returns>
@@ -189,7 +203,7 @@ namespace FileManager
         }
 
         /// <summary>
-        /// вывод на консоль списка доступных действий  с элементом
+        /// Вывод на консоль списка доступных действий  с элементом
         /// </summary>
         /// <param name="array"></param>
         /// <param name="element_name"></param>
@@ -209,7 +223,7 @@ namespace FileManager
         }
 
         /// <summary>
-        /// вывод на консоль списка файлов\папок из текущей директории
+        /// Вывод на консоль списка файлов\папок из текущей директории
         /// </summary>
         public void PrintList()
         {
@@ -271,7 +285,7 @@ namespace FileManager
 
 
         /// <summary>
-        /// создание массива файлов\папок для текущей директории
+        /// Создание массива файлов\папок для текущей директории
         /// </summary>
         /// <returns>массив элементов</returns>
         public FileElement[] CreateList()
@@ -295,7 +309,7 @@ namespace FileManager
         }
 
         /// <summary>
-        /// "шапка" для отображения с каким элементом производится взаимодействие
+        /// "Шапка" для отображения с каким элементом производится взаимодействие
         /// </summary>
         /// <param name="directory">имя элемента для отображения</param>
         public void PrintHead(string directory)
@@ -307,7 +321,7 @@ namespace FileManager
         }
 
         /// <summary>
-        /// вывод на консоль массива с информацией о элементе
+        /// Вывод на консоль массива с информацией о элементе
         /// </summary>
         /// <param name="info">массив строк с информацией</param>
         public void PrintInfo(string[] info)

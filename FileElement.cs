@@ -8,19 +8,28 @@ using System.Diagnostics;
 
 namespace FileManager
 {
+    /// <summary>
+    /// Класс описывающий папки\файлы и способы взаимодействия
+    /// </summary>
     class FileElement
     {
         /// <summary>
-        /// тип элемента
+        /// Тип элемента
         /// </summary>
         public enum TypeElement
         {
+            /// <summary>
+            /// Папка
+            /// </summary>
             Folder,
+            /// <summary>
+            /// Файл
+            /// </summary>
             File
         }
 
         /// <summary>
-        /// делегат для открытия элемента в зависимости от типа файла
+        /// Делегат для открытия элемента в зависимости от типа файла
         /// входящим параметром подаётся текущая директория
         /// если элемент является папкой то открываятся эта папка
         /// </summary>
@@ -28,7 +37,7 @@ namespace FileManager
         delegate void how_open(ref string change_line);
 
         /// <summary>
-        /// делегат для копирования элемента
+        /// Делегат для копирования элемента
         /// </summary>
         /// <param name="x"> адрес расположения элемента</param>
         /// <param name="y">адрес куда копировать элемент</param>
@@ -38,16 +47,16 @@ namespace FileManager
         how_copy copy_element;
 
         /// <summary>
-        /// тип элемента
+        /// Тип элемента
         /// </summary>
         public TypeElement type { get; }
 
         /// <summary>
-        /// адрес элемента
+        /// Адрес элемента
         /// </summary>
         public string Way { get; }
         /// <summary>
-        /// имя элемента для отображения
+        /// Имя элемента для отображения
         /// </summary>
         public string Name { get; }
 
@@ -93,7 +102,7 @@ namespace FileManager
         }
 
         /// <summary>
-        /// вызов функции для копирования элемента
+        /// Вызов функции для копирования элемента
         /// </summary>
         /// <param name="new_way">адрес куда копировать элемент</param>
         public void CopyElement(string new_way)
@@ -108,7 +117,7 @@ namespace FileManager
         }
 
         /// <summary>
-        /// копирование файла
+        /// Копирование файла
         /// </summary>
         /// <param name="old_way">текущее расположение файла</param>
         /// <param name="new_way">адрес куда копировать файл</param>
@@ -118,7 +127,7 @@ namespace FileManager
         }
 
         /// <summary>
-        /// копирование папки
+        /// Копирование папки
         /// </summary>
         /// <param name="startdir">полный адрес расположения папки</param>
         /// <param name="newdir">адрес куда копировать</param>
@@ -148,7 +157,7 @@ namespace FileManager
         }
 
         /// <summary>
-        /// проверка на то что папка копируется сама в себя
+        /// Проверка на то что папка копируется сама в себя
         /// </summary>
         /// <param name="start">откуда копируется</param>
         /// <param name="end">куда копируется</param>
@@ -171,7 +180,7 @@ namespace FileManager
         }
 
         /// <summary>
-        /// открытие папки
+        /// Открытие папки
         /// </summary>
         /// <param name="change_line">изменяет входящую строку на адрес папки</param>
         public void OpenFolder(ref string change_line)
@@ -192,7 +201,7 @@ namespace FileManager
         }
 
         /// <summary>
-        /// удаление элемента
+        /// Удаление элемента
         /// </summary>
         public void DeleteElement()
         {
@@ -207,7 +216,7 @@ namespace FileManager
         }
 
         /// <summary>
-        /// создаёт список возможных действий с элементом
+        /// Создаёт список возможных действий с элементом
         /// </summary>
         /// <returns>массив возможных действий</returns>
         public string[,] SubMenu()
