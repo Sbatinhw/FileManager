@@ -14,7 +14,7 @@
 
 <summary>
 
-Класс описывающий папки\файлы и способы взаимодействия
+FileElement Класс описывающий папки\файлы и способы взаимодействия
 
 </summary>
 
@@ -24,7 +24,7 @@
 
 <summary>
 
-Тип элемента
+TypeElement Тип элемента
 
 </summary>
 
@@ -34,7 +34,7 @@
 
 <summary>
 
-Папка
+TypeElement.Folder Папка
 
 </summary>
 
@@ -44,7 +44,7 @@
 
 <summary>
 
-Файл
+TypeElement.File Файл
 
 </summary>
 
@@ -53,6 +53,7 @@
 <member name="T:FileManager.FileElement.how\_open">
 
 <summary>
+FileElement.how_open
 
 Делегат для открытия элемента в зависимости от типа файла
 
@@ -62,27 +63,29 @@
 
 </summary>
 
-<param name="change\_line">текщая директория</param>
+<param name="change\_line">change_line текщая директория</param>
 
 </member>
 
 <member name="T:FileManager.FileElement.how\_copy">
 
 <summary>
+how_copy
 
 Делегат для копирования элемента
 
 </summary>
 
-<param name="x"> адрес расположения элемента</param>
+<param name="x">x адрес расположения элемента</param>
 
-<param name="y">адрес куда копировать элемент</param>
+<param name="y">y адрес куда копировать элемент</param>
 
 </member>
 
 <member name="P:FileManager.FileElement.type">
 
 <summary>
+type
 
 Тип элемента
 
@@ -93,6 +96,7 @@
 <member name="P:FileManager.FileElement.Way">
 
 <summary>
+Way
 
 Адрес элемента
 
@@ -103,6 +107,7 @@
 <member name="P:FileManager.FileElement.Name">
 
 <summary>
+Name
 
 Имя элемента для отображения
 
@@ -113,6 +118,7 @@
 <member name="M:FileManager.FileElement.#ctor(System.String)">
 
 <summary>
+FileElement
 
 Конструктор элемента
 
@@ -125,6 +131,7 @@
 <member name="M:FileManager.FileElement.Info">
 
 <summary>
+Info
 
 Создание массива строк с информацией о элементе
 
@@ -138,6 +145,8 @@
 
 <summary>
 
+CopyElement
+
 Вызов функции для копирования элемента
 
 </summary>
@@ -149,6 +158,8 @@
 <member name="M:FileManager.FileElement.CopyFile(System.String,System.String)">
 
 <summary>
+
+CopyFile
 
 Копирование файла
 
@@ -164,6 +175,8 @@
 
 <summary>
 
+CopyFold
+
 Копирование папки
 
 </summary>
@@ -177,6 +190,8 @@
 <member name="M:FileManager.FileElement.RecurseCopy(System.String,System.String)">
 
 <summary>
+
+RecurseCopy
 
 Проверка на то что папка копируется сама в себя
 
@@ -194,7 +209,7 @@
 
 <summary>
 
-Открытие папки
+OpenFolder Открытие папки
 
 </summary>
 
@@ -205,6 +220,7 @@
 <member name="M:FileManager.FileElement.OpenFile(System.String@)">
 
 <summary>
+OpenFile
 
 Открытие файла
 
@@ -218,6 +234,8 @@
 
 <summary>
 
+DeleteElement
+
 Удаление элемента
 
 </summary>
@@ -227,6 +245,8 @@
 <member name="M:FileManager.FileElement.SubMenu">
 
 <summary>
+
+SubMenu
 
 Создаёт список возможных действий с элементом
 
@@ -240,6 +260,8 @@
 
 <summary>
 
+MainMenu.Menu
+
 Главный метод проекта, из него запускается приложение
 
 </summary>
@@ -249,6 +271,8 @@
 <member name="M:FileManager.MainMenu.Operation">
 
 <summary>
+
+Operation
 
 Вызов управления кнопками
 
@@ -260,6 +284,8 @@
 
 <summary>
 
+Things
+
 Метод определяет какое дополнительное меню открыть
 
 </summary>
@@ -269,6 +295,8 @@
 <member name="M:FileManager.MainMenu.DoCopy">
 
 <summary>
+
+DoCopy
 
 Действия с копированными элементами
 
@@ -280,6 +308,8 @@
 
 <summary>
 
+ClearCopyList
+
 Полная очистка массива с копированными элементами
 
 </summary>
@@ -289,6 +319,8 @@
 <member name="M:FileManager.MainMenu.SelectCopyList">
 
 <summary>
+
+SelectCopyList
 
 Отобразить список копированных элементов
 
@@ -300,6 +332,8 @@
 
 <summary>
 
+PasteCopyList
+
 Вставить копированные элементы в текущую директорию
 
 </summary>
@@ -309,6 +343,8 @@
 <member name="M:FileManager.MainMenu.DoThings(System.String,System.Int32)">
 
 <summary>
+
+DoThings
 
 Вызов дополнительных функций файла\папки
 
@@ -324,6 +360,8 @@
 
 <summary>
 
+AddToCopyList
+
 Добавить элемент в массив для копирования
 
 </summary>
@@ -335,6 +373,8 @@
 <member name="M:FileManager.MainMenu.SubMenu(System.Int32)">
 
 <summary>
+
+SubMenu
 
 Список возможных действий с элементом
 
@@ -350,6 +390,8 @@
 
 <summary>
 
+PrintSubMenu
+
 Вывод на консоль списка доступных действий  с элементом
 
 </summary>
@@ -364,6 +406,8 @@
 
 <summary>
 
+PrintList
+
 Вывод на консоль списка файлов\папок из текущей директории
 
 </summary>
@@ -373,6 +417,8 @@
 <member name="M:FileManager.MainMenu.CreateList">
 
 <summary>
+
+CreateList
 
 Создание массива файлов\папок для текущей директории
 
@@ -386,6 +432,8 @@
 
 <summary>
 
+PrintHead
+
 "Шапка" для отображения с каким элементом производится взаимодействие
 
 </summary>
@@ -397,6 +445,8 @@
 <member name="M:FileManager.MainMenu.PrintInfo(System.String[])">
 
 <summary>
+
+PrintInfo
 
 Вывод на консоль массива с информацией о элементе
 
@@ -410,6 +460,8 @@
 
 <summary>
 
+PrintLine
+
 Вывод информации на консоль
 
 </summary>
@@ -420,6 +472,8 @@
 
 <summary>
 
+FullLine
+
 сплошная линия из звёздочек
 
 </summary>
@@ -429,6 +483,8 @@
 <member name="M:FileManager.PrintLine.ColorPrint(System.String)">
 
 <summary>
+
+ColorPrint
 
 печать текста с выделением, по краям звёзддочки
 
@@ -442,6 +498,8 @@
 
 <summary>
 
+Print
+
 печать текста без выделения цветом
 
 </summary>
@@ -454,6 +512,8 @@
 
 <summary>
 
+WorkKeys
+
 Класс для взаимодействия клавишами клавиатуры с приложением
 
 </summary>
@@ -463,6 +523,8 @@
 <member name="M:FileManager.WorkKeys.Navigation(System.Int32@,System.Int32)">
 
 <summary>
+
+Navigation
 
 Обработка действий клавиш
 
