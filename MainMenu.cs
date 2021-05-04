@@ -12,13 +12,13 @@ namespace FileManager
 {
     class MainMenu
     {
-        string start_directory = @"C:\Users\user\Desktop\testfile";
+        string start_directory = Properties.Settings.Default.start_directory ;//@"C:\Users\user\Desktop\testfile";
         int top_limit = 0;
         int select_position = 0;
         FileElement[] list;
         FileElement[] copylist = new FileElement[1];
         int len_menu = 0;
-        int quant_element = 5;
+        int quant_element = Properties.Settings.Default.page_len;
         bool workflag = true;
         bool havecopy = false;
 
@@ -36,9 +36,17 @@ namespace FileManager
                 PrintHead(start_directory);
                 PrintList();
                 Operation();
-
+                SaveSettings();
             }
+            Console.Clear();
+            Console.WriteLine("Работа завершена. Нажмите ENTER для выхода.");
+        }
 
+        public void SaveSettings()
+        {
+            Properties.Settings.Default.start_directory = start_directory;
+            Properties.Settings.Default.page_len = quant_element;
+            Properties.Settings.Default.Save();
         }
 
         /// <summary>
@@ -84,6 +92,7 @@ namespace FileManager
         /// </summary>
         public void DoCopy()
         {
+            int subpos = 0;
             bool subflag = true;
             string whatdo = "";
             string[,] copymenu =  {
@@ -93,12 +102,12 @@ namespace FileManager
             };
             while (subflag)
             {
-                PrintSubMenu(copymenu, "Буфер");
-                WorkKeys.Doing todo = WorkKeys.Navigation(ref select_position, copymenu.GetUpperBound(0));
+                PrintSubMenu(copymenu, "Буфер", ref subpos);
+                WorkKeys.Doing todo = WorkKeys.Navigation(ref subpos, copymenu.GetUpperBound(0));
                 switch (todo)
                 {
                     case WorkKeys.Doing.exit: subflag = false; break;
-                    case WorkKeys.Doing.doit: whatdo = copymenu[select_position, 1]; subflag = false; break;
+                    case WorkKeys.Doing.doit: whatdo = copymenu[subpos, 1]; subflag = false; break;
                 }
             }
             switch (whatdo)
@@ -186,17 +195,19 @@ namespace FileManager
         /// <returns></returns>
         public string SubMenu(int position)
         {
+            int subpos = 0;
             bool subflag = true;
             string whatdo = "";
             while (subflag)
             {
                 string[,] arr = list[position].SubMenu();
-                PrintSubMenu(arr, list[position].Name);
-                WorkKeys.Doing todo = WorkKeys.Navigation(ref select_position, arr.GetUpperBound(0));
+                PrintSubMenu(arr, list[position].Name, ref subpos);
+                WorkKeys.Doing todo = WorkKeys.Navigation(ref subpos, arr.GetUpperBound(0));
+                //WorkKeys.Doing todo = WorkKeys.Navigation(ref select_position, arr.GetUpperBound(0));
                 switch (todo)
                 {
                     case WorkKeys.Doing.exit: subflag = false; break;
-                    case WorkKeys.Doing.doit: whatdo = arr[select_position, 1]; subflag = false; break;
+                    case WorkKeys.Doing.doit: whatdo = arr[subpos, 1]; subflag = false; break;
                 }
             }
             return whatdo;
@@ -207,7 +218,7 @@ namespace FileManager
         /// </summary>
         /// <param name="array"></param>
         /// <param name="element_name"></param>
-        public void PrintSubMenu(string[,] array, string element_name)
+        public void PrintSubMenu(string[,] array, string element_name, ref int position)
         {
             Console.Clear();
             int rows = array.GetUpperBound(0) + 1;
@@ -215,7 +226,7 @@ namespace FileManager
             PrintLine.FullLine();
             for (int i = 0; i < rows; i++)
             {
-                if (select_position == i) { PrintLine.ColorPrint(array[i, 0]); }
+                if (position == i) { PrintLine.ColorPrint(array[i, 0]); }
                 else { PrintLine.Print(array[i, 0]); }
             }
             PrintLine.FullLine();
