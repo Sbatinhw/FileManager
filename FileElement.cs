@@ -25,7 +25,19 @@ namespace FileManager
             /// <summary>
             /// Файл
             /// </summary>
-            File
+            File,
+            /// <summary>
+            /// кнопка назад
+            /// </summary>
+            backspace,
+            /// <summary>
+            /// Диск
+            /// </summary>
+            drive,
+            /// <summary>
+            /// кнопка буфер обмена
+            /// </summary>
+            copylistbutton
         }
 
         /// <summary>
@@ -43,6 +55,8 @@ namespace FileManager
         /// <param name="y">адрес куда копировать элемент</param>
         delegate void how_copy(string x, string y);
 
+        delegate string[,] SubMenuList();
+
         how_open open_element;
         how_copy copy_element;
 
@@ -59,6 +73,37 @@ namespace FileManager
         /// Имя элемента для отображения
         /// </summary>
         public string Name { get; }
+
+        string[,] menuElem;
+
+        public FileElement(TypeElement buttontype, string path = "")
+        {
+            if(buttontype == TypeElement.backspace)
+            {
+                Name = "...";
+                string[,] testlist = { { "Открыть предыдущий каталог", "backfold" } };
+                menuElem = testlist;
+            } else if(buttontype == TypeElement.drive)
+            {
+                Way = path;
+                type = TypeElement.drive;
+                DirectoryInfo dirInfo = new DirectoryInfo(Way);
+                Name = dirInfo.Name;
+                open_element = OpenFolder;
+                string[,] testlist = { { "Открыть", "open" } };
+                menuElem = testlist;
+            } else if (buttontype == TypeElement.copylistbutton)
+            {
+                Name = "Скопированные элементы";
+                string[,] testlist = 
+                {
+                {"Показать список копированных элементов", "selectcopy" },
+                {"Скопировать в текущую директорию","paste" },
+                {"Очистить список","clear" }
+                };
+                menuElem = testlist;
+            }
+        }
 
         /// <summary>
         /// Конструктор элемента
@@ -82,6 +127,15 @@ namespace FileManager
             if (type == TypeElement.File) { open_element = OpenFile; copy_element = CopyFile; }
             else { open_element = OpenFolder; copy_element = CopyFold; }
 
+            string[,] testlist =
+            {
+                { "Открыть", "open" },
+                {"Копировать", "copy" },
+                {"Удалить", "delete" },
+                {"Информация", "info" }
+            };
+
+            menuElem = testlist;
 
         }
 
@@ -175,8 +229,7 @@ namespace FileManager
 
         public void OpenElement(ref string change_line)
         {
-            open_element(ref change_line);
-
+                open_element(ref change_line);
         }
 
         /// <summary>
@@ -221,15 +274,26 @@ namespace FileManager
         /// <returns>массив возможных действий</returns>
         public string[,] SubMenu()
         {
-            string[,] menu =
-            {
-                { "Открыть", "open" },
-                {"Копировать", "copy" },
-                {"Удалить", "delete" },
-                {"Информация", "info" }
-            };
-            return menu;
+            
+            return menuElem;
         }
+
+
+        public void OpenParentDir(ref string current_dir)
+        {
+            try
+            {
+                current_dir = Directory.GetParent(current_dir)?.FullName;
+            }
+            catch
+            {
+                current_dir = @"...";
+            }
+
+        }
+
+        
+
 
         //
     }

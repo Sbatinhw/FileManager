@@ -25,7 +25,7 @@ namespace FileManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:")]
+        [global::System.Configuration.DefaultSettingValueAttribute("@\"test\"")]
         public string start_directory {
             get {
                 return ((string)(this["start_directory"]));
@@ -44,6 +44,18 @@ namespace FileManager.Properties {
             }
             set {
                 this["page_len"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool help {
+            get {
+                return ((bool)(this["help"]));
+            }
+            set {
+                this["help"] = value;
             }
         }
     }

@@ -1,41 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
-/// <summary>
-/// Главное окно файлового менеджера
-/// </summary>
 namespace FileManager
 {
     class MainMenu
     {
-        string start_directory = Properties.Settings.Default.start_directory ;//@"C:\Users\user\Desktop\testfile";
-        int top_limit = 0;
+        string start_directory = Properties.Settings.Default.start_directory;
         int select_position = 0;
+        int top_limit = 0;
         FileElement[] list;
         FileElement[] copylist = new FileElement[1];
         int len_menu = 0;
         int quant_element = Properties.Settings.Default.page_len;
         bool workflag = true;
+        bool PrintHelp = Properties.Settings.Default.help;
         bool havecopy = false;
 
-
-        /// <summary>
-        /// Главный метод проекта, из него запускается приложение
-        /// </summary>
         public void Menu()
         {
             while (workflag)
             {
                 Console.Clear();
-                list = CreateList();
-                len_menu = list.Length;
+                if (CheckDir()) { CreateList(); }
                 PrintHead(start_directory);
                 PrintList();
-                Operation();
+                if (PrintHelp) { PrintHelpMenu(); }
+                OperationMenu();
                 SaveSettings();
             }
             Console.Clear();
@@ -46,90 +40,205 @@ namespace FileManager
         {
             Properties.Settings.Default.start_directory = start_directory;
             Properties.Settings.Default.page_len = quant_element;
+            Properties.Settings.Default.help = PrintHelp;
             Properties.Settings.Default.Save();
         }
 
-        /// <summary>
-        /// Вызов управления кнопками
-        /// </summary>
-        public void Operation()
+        public bool CheckDir()
+        {
+            if (Directory.Exists(start_directory)) { return true; }
+
+            DriveInfo[] alldrive = DriveInfo.GetDrives();
+            list = new FileElement[alldrive.Length];
+
+            for (int i = 0; i < list.Length; i++)
+            {
+                list[i] = new FileElement(FileElement.TypeElement.drive, alldrive[i].Name);
+            }
+            len_menu = list.Length - 1;
+            start_directory = $"Укажите диск";
+
+            return false;
+
+        }
+
+        public void PrintList()
+        {
+            int quant = 0;
+
+            if (select_position == top_limit + quant_element - 1)
+            {
+                top_limit++;
+            }
+            else if (select_position == 0) { top_limit = 0; }
+
+            else if (select_position == top_limit) { top_limit--; }
+
+            PrintLine.FullLine();
+            for (int i = top_limit; i < list.Length; i++)
+            {
+                if(quant == quant_element) { break; }
+                if (i == select_position) { PrintLine.ColorPrint(list[i].Name); }
+                else { PrintLine.Print(list[i].Name); }
+                quant++;
+            }
+            while (quant < quant_element) { PrintLine.Print(""); quant++; }
+
+            PrintLine.FullLine();
+
+        }
+
+        public void CreateList()
+        {
+            string[] dirs;
+            string[] file;
+            try
+            {
+                dirs = Directory.GetDirectories(start_directory);
+                file = Directory.GetFiles(start_directory);
+            }
+
+            catch
+            {
+                PrintHead(start_directory);
+                PrintLine.FullLine();
+                PrintLine.Print("ошибка доступа");
+                start_directory = Directory.GetParent(start_directory)?.FullName;
+                PrintLine.FullLine();
+                Console.ReadLine();
+                Console.Clear();
+                return;
+            }
+
+            int first_button = 1;
+            int last_button = 0;
+
+            if (havecopy)
+            {
+                last_button += 1;
+            }
+
+            int list_len = dirs.Length + file.Length + first_button + last_button;
+
+            list = new FileElement[list_len];
+
+            list[0] = new FileElement(FileElement.TypeElement.backspace);
+
+            if (havecopy)
+            {
+                list[list.Length - 1] = new FileElement(FileElement.TypeElement.copylistbutton);
+            }
+
+            for (int i = 1; i < list.Length - last_button; i++)
+            {
+                if (i - first_button < dirs.Length)
+                {
+                    list[i] = new FileElement(dirs[i - first_button]);
+                }
+                else if (i  >= dirs.Length + first_button)
+                {
+                    list[i] = new FileElement(file[i - dirs.Length - first_button]);
+                }
+            }
+
+            len_menu = list.Length - 1;
+        }
+
+        public void OperationMenu()
         {
             WorkKeys.Doing act = WorkKeys.Navigation(ref select_position, len_menu);
             switch (act)
             {
-                case WorkKeys.Doing.doit: Things(); break;
+                case WorkKeys.Doing.doit: SubMenu(); break;
                 case WorkKeys.Doing.exit: workflag = false; break;
 
             }
         }
 
-        /// <summary>
-        /// Метод определяет какое дополнительное меню открыть
-        /// </summary>
-        public void Things()
+        public void SubMenu()
         {
-            //вернуться в предыдущий каталог
-            if (select_position == 0)
-            {
-                start_directory = Directory.GetParent(start_directory).FullName;
-            }
-            //действия с копированными элементами
-            else if (select_position == list.Length + 1)
-            {
-                DoCopy();
-            }
-            //открыть функции (возможные действия) файла\папки
-            else
-            {
-                int element_num = select_position - 1;
-                DoThings(SubMenu(element_num), element_num);
-            }
-        }
+            int position = 0;
+            string[,] subarr = list[select_position].SubMenu();
+            int rows = subarr.GetUpperBound(0);
+            bool subworkflag = true;
+            string todo = "";
 
-        
-        /// <summary>
-        /// Действия с копированными элементами
-        /// </summary>
-        public void DoCopy()
-        {
-            int subpos = 0;
-            bool subflag = true;
-            string whatdo = "";
-            string[,] copymenu =  {
-                {"Показать список копированных элементов", "selectcopy" },
-                {"Скопировать в текущую директорию","paste" },
-                {"Очистить список","clear" }
-            };
-            while (subflag)
+            while (subworkflag)
             {
-                PrintSubMenu(copymenu, "Буфер", ref subpos);
-                WorkKeys.Doing todo = WorkKeys.Navigation(ref subpos, copymenu.GetUpperBound(0));
-                switch (todo)
+                PrintSubMenu(subarr, position);
+                WorkKeys.Doing act = WorkKeys.Navigation(ref position, rows);
+                switch (act)
                 {
-                    case WorkKeys.Doing.exit: subflag = false; break;
-                    case WorkKeys.Doing.doit: whatdo = copymenu[subpos, 1]; subflag = false; break;
+                    case WorkKeys.Doing.exit: subworkflag = false; break;
+                    case WorkKeys.Doing.doit: todo = subarr[position, 1]; subworkflag = false; break;
                 }
+                    
             }
-            switch (whatdo)
+
+            switch (todo)
             {
+                case "open": list[select_position].OpenElement(ref start_directory); break;
+                case "copy": AddToCopyList(list[select_position]); break;
+                case "delete": list[select_position].DeleteElement(); break;
+                case "info": PrintInfo(list[select_position].Info());  break;
+                case "backfold": list[select_position].OpenParentDir(ref start_directory); break;
                 case "selectcopy": SelectCopyList(); break;
                 case "paste": PasteCopyList(); break;
                 case "clear": ClearCopyList(); break;
             }
+
         }
 
-        /// <summary>
-        /// Полная очистка массива с копированными элементами
-        /// </summary>
+        public void PrintSubMenu(string[,] array, int position)
+        {
+            Console.Clear();
+            PrintHead(list[select_position].Name);
+            PrintLine.FullLine();
+            int rows = array.GetUpperBound(0) + 1;
+            for (int i = 0; i < rows; i++)
+            {
+                if(i == position) { PrintLine.ColorPrint(array[i, 0]); }
+                else { PrintLine.Print(array[i, 0]); }
+            }
+            PrintLine.FullLine();
+            if (PrintHelp) { PrintHelpMenu(); }
+        }
+
+        public void PrintInfo(string[] info)
+        {
+            Console.Clear();
+            PrintLine.FullLine();
+            for (int i = 0; i < info.Length; i++)
+            {
+                PrintLine.Print(info[i]);
+            }
+            PrintLine.FullLine();
+            Console.ReadLine();
+        }
+
+        public void PrintHead(string directory)
+        {
+            PrintLine.FullLine();
+            PrintLine.Print("Элемент: ");
+            PrintLine.Print(directory);
+            PrintLine.FullLine();
+        }
+
+        public void PrintHelpMenu()
+        {
+            PrintLine.FullLine();
+            PrintLine.Print("Стрелочки вверх и вниз для листания.");
+            PrintLine.Print("Esc для выхода.");
+            PrintLine.Print("Enter для выбора.");
+            PrintLine.FullLine();
+        }
+
         public void ClearCopyList()
         {
             copylist = new FileElement[1];
             havecopy = false;
         }
 
-        /// <summary>
-        /// Отобразить список копированных элементов
-        /// </summary>
         public void SelectCopyList()
         {
             int z = 0;
@@ -147,9 +256,6 @@ namespace FileManager
             Console.ReadLine();
         }
 
-        /// <summary>
-        /// Вставить копированные элементы в текущую директорию
-        /// </summary>
         public void PasteCopyList()
         {
             for (int i = 0; i < copylist.Length; i++)
@@ -161,191 +267,12 @@ namespace FileManager
             }
         }
 
-        /// <summary>
-        /// Вызов дополнительных функций файла\папки
-        /// </summary>
-        /// <param name="todo">определяет что нужно сделать</param>
-        /// <param name="position">номер элемента</param>
-        public void DoThings(string todo, int position)
-        {
-            switch (todo)
-            {
-                case "open": list[position].OpenElement(ref start_directory); break;
-                case "copy": AddToCopyList(list[position]); break;
-                case "delete": list[position].DeleteElement(); break;
-                case "info": PrintInfo(list[position].Info()); break;
-            }
-        }
-
-        /// <summary>
-        /// Добавить элемент в массив для копирования
-        /// </summary>
-        /// <param name="file_to_copy"></param>
         public void AddToCopyList(FileElement file_to_copy)
         {
             havecopy = true;
             if (copylist[copylist.Length - 1] == null) { copylist[copylist.Length - 1] = file_to_copy; }
             else { Array.Resize(ref copylist, copylist.Length + 1); copylist[copylist.Length - 1] = file_to_copy; }
         }
-
-        /// <summary>
-        /// Список возможных действий с элементом
-        /// </summary>
-        /// <param name="position">номер элемента</param>
-        /// <returns></returns>
-        public string SubMenu(int position)
-        {
-            int subpos = 0;
-            bool subflag = true;
-            string whatdo = "";
-            while (subflag)
-            {
-                string[,] arr = list[position].SubMenu();
-                PrintSubMenu(arr, list[position].Name, ref subpos);
-                WorkKeys.Doing todo = WorkKeys.Navigation(ref subpos, arr.GetUpperBound(0));
-                //WorkKeys.Doing todo = WorkKeys.Navigation(ref select_position, arr.GetUpperBound(0));
-                switch (todo)
-                {
-                    case WorkKeys.Doing.exit: subflag = false; break;
-                    case WorkKeys.Doing.doit: whatdo = arr[subpos, 1]; subflag = false; break;
-                }
-            }
-            return whatdo;
-        }
-
-        /// <summary>
-        /// Вывод на консоль списка доступных действий  с элементом
-        /// </summary>
-        /// <param name="array"></param>
-        /// <param name="element_name"></param>
-        public void PrintSubMenu(string[,] array, string element_name, ref int position)
-        {
-            Console.Clear();
-            int rows = array.GetUpperBound(0) + 1;
-            PrintHead(element_name);
-            PrintLine.FullLine();
-            for (int i = 0; i < rows; i++)
-            {
-                if (position == i) { PrintLine.ColorPrint(array[i, 0]); }
-                else { PrintLine.Print(array[i, 0]); }
-            }
-            PrintLine.FullLine();
-
-        }
-
-        /// <summary>
-        /// Вывод на консоль списка файлов\папок из текущей директории
-        /// </summary>
-        public void PrintList()
-        {
-            //количество уже выведеных на консоль элементов
-            int quant = 0;
-
-            //если курсор находится внизу напечатаного списка вывести на консоль ещё один элемент
-            if (select_position == top_limit + quant_element)
-            {
-                top_limit++;
-            }
-            else if (select_position == 0) { top_limit = 0; }
-            //если курсор находится вверху напечатаного списка убрать из вывода один элемент
-            else if (select_position == top_limit) { top_limit--; }
-
-            //если курсор находится в самом начале списка
-            //то вывести на консоль кнопку вернуться в предыдущую директорию
-            if (top_limit == 0)
-            {
-                if (select_position == 0)
-                    PrintLine.ColorPrint("...");
-                else if (top_limit == 0) { PrintLine.Print("..."); }
-            }
-
-            for (int i = top_limit; i < list.Length; i++)
-            {
-                if (quant == quant_element) { break; }
-                if (i == select_position - 1)
-                {
-                    PrintLine.ColorPrint(list[i].Name);
-                }
-                else
-                {
-                    PrintLine.Print(list[i].Name);
-                }
-                quant++;
-            }
-
-            //если в массиве для копированных элементов если файлы\папки
-            //отобразить кнопку для вызова меню взаимодействия с этим массивом
-            if (havecopy)
-            {
-                len_menu += 1;
-                if (select_position == list.Length + 1)
-                {
-                    PrintLine.ColorPrint("Скопированные файлы");
-                }
-                else
-                {
-                    PrintLine.Print("Скопированные файлы");
-                }
-            }
-
-            PrintLine.FullLine();
-
-
-        }
-
-
-
-        /// <summary>
-        /// Создание массива файлов\папок для текущей директории
-        /// </summary>
-        /// <returns>массив элементов</returns>
-        public FileElement[] CreateList()
-        {
-            string[] dirs = Directory.GetDirectories(start_directory);
-            string[] file = Directory.GetFiles(start_directory);
-            int list_len = dirs.Length + file.Length;
-            FileElement[] list = new FileElement[list_len];
-            for (int i = 0; i < list.Length; i++)
-            {
-                if (i < dirs.Length)
-                {
-                    list[i] = new FileElement(dirs[i]);
-                }
-                else if (i >= dirs.Length)
-                {
-                    list[i] = new FileElement(file[i - dirs.Length]);
-                }
-            }
-            return list;
-        }
-
-        /// <summary>
-        /// "Шапка" для отображения с каким элементом производится взаимодействие
-        /// </summary>
-        /// <param name="directory">имя элемента для отображения</param>
-        public void PrintHead(string directory)
-        {
-            PrintLine.FullLine();
-            PrintLine.Print("Элемент: ");
-            PrintLine.Print(directory);
-            PrintLine.FullLine();
-        }
-
-        /// <summary>
-        /// Вывод на консоль массива с информацией о элементе
-        /// </summary>
-        /// <param name="info">массив строк с информацией</param>
-        public void PrintInfo(string[] info)
-        {
-            PrintLine.FullLine();
-            for (int i = 0; i < info.Length; i++)
-            {
-                PrintLine.Print(info[i]);
-            }
-            PrintLine.FullLine();
-            Console.ReadLine();
-        }
-
 
         //
     }

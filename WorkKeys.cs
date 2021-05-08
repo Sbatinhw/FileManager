@@ -28,6 +28,8 @@ namespace FileManager
         /// <returns>какое действие нужно выполнить</returns>
         public static Doing Navigation(ref int select_position, int menu_len)
         {
+            if (select_position > menu_len) { select_position = 0; return Doing.nothing; }
+
             ConsoleKeyInfo key;
             key = Console.ReadKey();
             if (key.Key == ConsoleKey.Escape)
