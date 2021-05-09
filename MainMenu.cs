@@ -20,6 +20,10 @@ namespace FileManager
         bool PrintHelp = Properties.Settings.Default.help;
         bool havecopy = false;
 
+        /// <summary>
+        /// Главный метод приложения.
+        /// Через него запускается приложение.
+        /// </summary>
         public void Menu()
         {
             while (workflag)
@@ -44,6 +48,10 @@ namespace FileManager
             Properties.Settings.Default.Save();
         }
 
+        /// <summary>
+        /// Проверка что директория существует
+        /// </summary>
+        /// <returns>False если не существует</returns>
         public bool CheckDir()
         {
             if (Directory.Exists(start_directory)) { return true; }
@@ -62,12 +70,17 @@ namespace FileManager
 
         }
 
+        /// <summary>
+        /// Выводит на консоль содержимое директории.
+        /// </summary>
         public void PrintList()
         {
+            //Количество выведенных элементов на консоль
             int quant = 0;
 
             if (select_position == top_limit + quant_element - 1)
             {
+                //сдвиг верхней границы
                 top_limit++;
             }
             else if (select_position == 0) { top_limit = 0; }
@@ -77,9 +90,15 @@ namespace FileManager
             PrintLine.FullLine();
             for (int i = top_limit; i < list.Length; i++)
             {
+                //остановка вывода на консоль
                 if(quant == quant_element) { break; }
+
+                //вывести на консоль с подсветкой
                 if (i == select_position) { PrintLine.ColorPrint(list[i].Name); }
+
+                //вывод на консоль без подсветки
                 else { PrintLine.Print(list[i].Name); }
+
                 quant++;
             }
             while (quant < quant_element) { PrintLine.Print(""); quant++; }
@@ -88,6 +107,9 @@ namespace FileManager
 
         }
 
+        /// <summary>
+        /// Создание массива элементов для отображения
+        /// </summary>
         public void CreateList()
         {
             string[] dirs;
@@ -144,6 +166,9 @@ namespace FileManager
             len_menu = list.Length - 1;
         }
 
+        /// <summary>
+        /// обработка нажатия клавиш в главном меню
+        /// </summary>
         public void OperationMenu()
         {
             WorkKeys.Doing act = WorkKeys.Navigation(ref select_position, len_menu);
@@ -155,6 +180,9 @@ namespace FileManager
             }
         }
 
+        /// <summary>
+        /// Дополнительные действия с элементом
+        /// </summary>
         public void SubMenu()
         {
             int position = 0;
@@ -189,6 +217,11 @@ namespace FileManager
 
         }
 
+        /// <summary>
+        /// Вывод на консоль возможных действий с элементом
+        /// </summary>
+        /// <param name="array">массив строк отображающих возможные действия</param>
+        /// <param name="position">позиция курсора</param>
         public void PrintSubMenu(string[,] array, int position)
         {
             Console.Clear();
@@ -204,6 +237,10 @@ namespace FileManager
             if (PrintHelp) { PrintHelpMenu(); }
         }
 
+        /// <summary>
+        /// Вывод на консоль информации о элементе
+        /// </summary>
+        /// <param name="info">массив строк</param>
         public void PrintInfo(string[] info)
         {
             Console.Clear();
@@ -216,6 +253,10 @@ namespace FileManager
             Console.ReadLine();
         }
 
+        /// <summary>
+        /// Заголовок отображающий с каким элементом в данный момент происходит взаимодейстие
+        /// </summary>
+        /// <param name="directory">Имя элемента</param>
         public void PrintHead(string directory)
         {
             PrintLine.FullLine();
@@ -233,12 +274,18 @@ namespace FileManager
             PrintLine.FullLine();
         }
 
+        /// <summary>
+        /// Очистка массива с копированными элементами
+        /// </summary>
         public void ClearCopyList()
         {
             copylist = new FileElement[1];
             havecopy = false;
         }
 
+        /// <summary>
+        /// Вывод на консоль содержимого массива с копированными элементами
+        /// </summary>
         public void SelectCopyList()
         {
             int z = 0;
@@ -256,6 +303,9 @@ namespace FileManager
             Console.ReadLine();
         }
 
+        /// <summary>
+        /// Вставить содержимое массива в текущую директорию
+        /// </summary>
         public void PasteCopyList()
         {
             for (int i = 0; i < copylist.Length; i++)
@@ -267,6 +317,10 @@ namespace FileManager
             }
         }
 
+        /// <summary>
+        /// Добавить элемент в массив для копирования
+        /// </summary>
+        /// <param name="file_to_copy"></param>
         public void AddToCopyList(FileElement file_to_copy)
         {
             havecopy = true;
