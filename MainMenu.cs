@@ -132,38 +132,27 @@ namespace FileManager
                 return;
             }
 
-            int first_button = 1;
-            int last_button = 0;
+            List<FileElement> listElem = new List<FileElement>();
 
-            if (havecopy)
+            listElem.Add(new FileElement(FileElement.TypeElement.backspace));
+
+            for(int i = 0; i < dirs.Length; i++)
             {
-                last_button += 1;
+                listElem.Add(new FileElement(dirs[i]));
             }
 
-            int list_len = dirs.Length + file.Length + first_button + last_button;
-
-            list = new FileElement[list_len];
-
-            list[0] = new FileElement(FileElement.TypeElement.backspace);
-
-            if (havecopy)
+            for (int i = 0; i < file.Length; i++)
             {
-                list[list.Length - 1] = new FileElement(FileElement.TypeElement.copylistbutton);
+                listElem.Add(new FileElement(file[i]));
             }
 
-            for (int i = 1; i < list.Length - last_button; i++)
-            {
-                if (i - first_button < dirs.Length)
-                {
-                    list[i] = new FileElement(dirs[i - first_button]);
-                }
-                else if (i  >= dirs.Length + first_button)
-                {
-                    list[i] = new FileElement(file[i - dirs.Length - first_button]);
-                }
-            }
+            if (havecopy) { listElem.Add(new FileElement(FileElement.TypeElement.copylistbutton)); }
 
-            len_menu = list.Length - 1;
+            len_menu = listElem.Count - 1;
+
+            list = listElem.ToArray();
+
+            
         }
 
         /// <summary>
