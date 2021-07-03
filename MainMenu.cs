@@ -13,7 +13,7 @@ namespace FileManager
         int select_position = 0;
         int top_limit = 0;
         FileElement[] list;
-        FileElement[] copylist = new FileElement[1];
+        List<FileElement> copylist = new List<FileElement>();
         int len_menu = 0;
         int quant_element = Properties.Settings.Default.page_len;
         bool workflag = true;
@@ -268,7 +268,7 @@ namespace FileManager
         /// </summary>
         public void ClearCopyList()
         {
-            copylist = new FileElement[1];
+            copylist = new List<FileElement>();
             havecopy = false;
         }
 
@@ -279,7 +279,7 @@ namespace FileManager
         {
             int z = 0;
             PrintLine.FullLine();
-            for (int i = 0; i < copylist.Length; i++)
+            for (int i = 0; i < copylist.Count; i++)
             {
                 if (copylist[i] != null)
                 {
@@ -297,7 +297,7 @@ namespace FileManager
         /// </summary>
         public void PasteCopyList()
         {
-            for (int i = 0; i < copylist.Length; i++)
+            for (int i = 0; i < copylist.Count; i++)
             {
                 if (copylist[i] != null)
                 {
@@ -313,8 +313,7 @@ namespace FileManager
         public void AddToCopyList(FileElement file_to_copy)
         {
             havecopy = true;
-            if (copylist[copylist.Length - 1] == null) { copylist[copylist.Length - 1] = file_to_copy; }
-            else { Array.Resize(ref copylist, copylist.Length + 1); copylist[copylist.Length - 1] = file_to_copy; }
+            copylist.Add(file_to_copy);
         }
 
         //
